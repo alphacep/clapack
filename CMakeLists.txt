@@ -3,6 +3,8 @@ project(CLAPACK C)
 enable_testing()
 include(CTest)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 if(WIN32 AND NOT CYGWIN)
   set(SECOND_SRC  ${CLAPACK_SOURCE_DIR}/INSTALL/winsecond.c)
   set(DSECOND_SRC  ${CLAPACK_SOURCE_DIR}/INSTALL/windsecnd.c)
