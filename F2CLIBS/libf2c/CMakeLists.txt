@@ -38,17 +38,35 @@ set(TIME dtime_.c etime_.c)
 
 # For INTEGER*8 support (which requires system-dependent adjustments to
 # f2c.h), add ${QINT} to the OFILES  assignment below...
-add_executable(arithchk arithchk.c)
-if(UNIX)
-  target_link_libraries(arithchk m)
+if(CMAKE_CROSSCOMPILING)
+  if(ARITH_H)
+    message(STATUS "Using the user-defined '${ARITH_H}' as arith.h header.")
+    configure_file("${ARITH_H}" "${CMAKE_CURRENT_BINARY_DIR}/arith.h" COPYONLY)
+  else()
+    message(STATUS "No user-defined arith.h header.")
+    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/arith.h")
+      message(WARNING "Generating the default non-optimized 'arith.h' header.
+
+To generate and provide a custom arith.h header:
+run the cross-compiled arithchk binary on your target,
+and use its output to fill your custom arith.h header.")
+      file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/arith.h"
+        "/* default, not optimized arith.h */")
+    endif()
+  endif()
+else()
+  add_executable(arithchk arithchk.c)
+  if(UNIX)
+    target_link_libraries(arithchk m)
+  endif()
+  set_target_properties(arithchk PROPERTIES COMPILE_DEFINITIONS
+    "NO_FPINIT;NO_LONG_LONG")
+  ADD_CUSTOM_COMMAND(
+     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/arith.h
+     COMMAND arithchk > ${CMAKE_CURRENT_BINARY_DIR}/arith.h
+     DEPENDS arithchk
+     )
 endif()
-set_target_properties(arithchk PROPERTIES COMPILE_DEFINITIONS 
-  "NO_FPINIT;NO_LONG_LONG")
-ADD_CUSTOM_COMMAND(
-   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/arith.h
-   COMMAND arithchk > ${CMAKE_CURRENT_BINARY_DIR}/arith.h
-   DEPENDS arithchk
-   )
 
 
 set(OFILES  ${MISC} ${POW} ${CX} ${DCX} ${REAL} ${DBL} ${INT} 
