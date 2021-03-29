@@ -13,6 +13,11 @@
 #define OFF_T __off64_t
 #endif
 
+#ifdef __ANDROID__
+#undef OFF_T
+#define OFF_T off64_t
+#endif
+
 #ifdef _AIX43
 #define _LARGE_FILES
 #define _LARGE_FILE_API
