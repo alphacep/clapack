@@ -3,3 +3,5 @@ CMakeFiles
 DartConfiguration.tcl
 CMakeCache.txt
 Makefile
+build/
+build.log
