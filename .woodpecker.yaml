@@ -1,0 +1,17 @@
+variables:
+  - &ci_image 'cont-reg.bjodah.se:443/bjodah/triceratops-4:33'
+
+when:
+  - event: [push]  # pull_request, tag, cron,
+
+steps:
+
+  - name: build-and-test
+    image: *ci_image
+    environment:
+      CI: 1
+    commands:
+      - cp -ra $PWD /tmp  # avoids unbuffered(?) disk-write race-condition, /dev/shm has noexec?
+      - cd /tmp/`basename $PWD`
+      - bash -l .ci/ci-01-build-and-test.sh
+
