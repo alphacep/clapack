@@ -32,14 +32,14 @@ macro(add_blas_test name src)
   add_executable(${name} ${src})
   target_link_libraries(${name} blas)
   if(EXISTS "${TEST_INPUT}")
-    add_test(${name} "${CMAKE_COMMAND}"
-      -DTEST=${name}
+    add_test(NAME ${name} COMMAND "${CMAKE_COMMAND}"
+      "-DTEST=$<TARGET_FILE:${name}>"
       -DINPUT=${TEST_INPUT}
       -DINTDIR=${CMAKE_CFG_INTDIR}
       -P "${CLAPACK_SOURCE_DIR}/TESTING/runtest.cmake")
     else()
-      add_test(${name} "${CMAKE_COMMAND}" 
-        -DTEST=${TEST_LOC}
+      add_test(NAME ${name} COMMAND "${CMAKE_COMMAND}" 
+        "-DTEST=$<TARGET_FILE:${name}>"
         -DINTDIR=${CMAKE_CFG_INTDIR}
         -P "${CLAPACK_SOURCE_DIR}/TESTING/runtest.cmake")
     endif()
@@ -59,4 +59,3 @@ add_blas_test(xblat3s sblat3.c)
 add_blas_test(xblat3c cblat3.c)
 add_blas_test(xblat3d dblat3.c)
 add_blas_test(xblat3z zblat3.c)
-

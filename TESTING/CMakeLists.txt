@@ -13,8 +13,8 @@ macro(add_lapack_test output input target)
   string(REPLACE "." "_" input_name ${input})
   set(testName "${target}_${input_name}")
   if(EXISTS "${TEST_INPUT}")
-    add_test(${testName} "${CMAKE_COMMAND}"
-      -DTEST=${target}
+    add_test(NAME ${testName} COMMAND "${CMAKE_COMMAND}"
+      "-DTEST=$<TARGET_FILE:${target}>"
       -DINPUT=${TEST_INPUT} 
       -DOUTPUT=${TEST_OUTPUT} 
       -DINTDIR=${CMAKE_CFG_INTDIR}
@@ -292,4 +292,3 @@ add_lapack_test(zgsv.out gsv.in xeigtstz)
 add_lapack_test(zlse.out lse.in xeigtstz)
 
 # ==============================================================================
-
