@@ -10,8 +10,17 @@ steps:
     image: *ci_image
     environment:
       CI: 1
+      ARTIFACTS_PASS:
+        from_secret: ARTIFACTS_PASS
+      FTP_SERVER:
+        from_secret: FTP_SERVER
     commands:
+      - curl --no-progress-meter ftp://${CI_REPO_NAME}:$${ARTIFACTS_PASS}@$${FTP_SERVER}/cache/ccache.tar | tar x -C $HOME || mkdir -p $HOME/.ccache
+      - ccache --zero-stats
+
       - cp -ra $PWD /tmp  # avoids unbuffered(?) disk-write race-condition, /dev/shm has noexec?
       - cd /tmp/`basename $PWD`
-      - bash -l .ci/ci-01-build-and-test.sh
-
+      - bash -l .ci/run-ci-steps.sh
+      - ccache --show-stats
+      - ccache --evict-older-than 14d
+      - tar cf - -C $HOME ./.ccache | curl --no-progress-meter -T - ftp://${CI_REPO_NAME}:$${ARTIFACTS_PASS}@$${FTP_SERVER}/cache/ccache.tar

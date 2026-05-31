@@ -2,7 +2,7 @@
 REPO_ROOT=$(realpath $(dirname ${BASH_SOURCE[0]})/..)
 # TMPDIR="$(mktemp -d)"
 # trap 'rm -rf "${TMPDIR}"' EXIT
-TMPDIR=build
+TMPDIR=build-${VARIANT}
 cmake \
     -DCMAKE_C_FLAGS=-fcommon `# gcc-14 seem to need fcommon for legacy COMMON block behaviour ` \
     -DCMAKE_GENERATOR=Ninja \
